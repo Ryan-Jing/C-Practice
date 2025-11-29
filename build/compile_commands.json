@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/ryanjing/Local/Projects-Local/Embedded/C-Practice/build",
+  "command": "/usr/bin/clang -g -arch arm64 -o CMakeFiles/cube.dir/cube.c.o -c /Users/ryanjing/Local/Projects-Local/Embedded/C-Practice/cube/cube.c",
+  "file": "/Users/ryanjing/Local/Projects-Local/Embedded/C-Practice/cube/cube.c",
+  "output": "CMakeFiles/cube.dir/cube.c.o"
+}
+]

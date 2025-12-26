@@ -1,6 +1,6 @@
 /**************************************************************************************************/
 /**
- * @file cube.c
+ * @file shape.c
  * @author Ryan Jing (r5jing@uwaterloo.ca)
  * @brief A simple 3D cube renderer in C using ASCII characters.
  *
@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
+#include "shape.h"
+#include "shapes_config.h"
 
 /*------------------------------------------------------------------------------------------------*/
 /* MACROS                                                                                         */
@@ -33,9 +35,8 @@
 /* GLOBAL VARIABLES                                                                               */
 /*------------------------------------------------------------------------------------------------*/
 
-float cube_width = 20;
+ShapeConfig *current_shape;  // Pointer to the current shape configuration
 
-float cube_position_x, cube_position_y, cube_position_z;
 float rotation_angle_A, rotation_angle_B, rotation_angle_C;
 float z_depth_buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT];
 
@@ -43,15 +44,14 @@ char display_frame_buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT];
 int display_background_ascii_character = ' ';
 int display_view_distance = 100;
 float display_field_of_view = 50;
-float display_cube_density = 0.2;
+float display_density = 0.2;
 float display_y_offset = 0;
 float display_x_offset = -10;
 float display_aspect_ratio = 1.5;  // Adjust to fix stretching (higher = wider cube)
 
-float cube_x, cube_y, cube_z;
 float inverse_z;
 int buffers_index;
-int cube_x_coordinate_3d_projected, cube_y_coordinate_3d_projected;
+int x_coordinate_3d_projected, y_coordinate_3d_projected;
 
 /*------------------------------------------------------------------------------------------------*/
 /* FUNCTION PROTOTYPES                                                                            */
@@ -91,14 +91,14 @@ int calculate_y_coordinate_3d_projection(float temporary_inverse_z, float tempor
 
 /**************************************************************************************************/
 /**
- * @name calculate_cube_display_output
- * @brief Calculates the display output for a rotating 3D cube by rendering its surfaces
+ * @name calculate_shape_display_output
+ * @brief Calculates the display output for a rotating 3D shape by rendering its surfaces
  *
  *
  * @return void
  */
 /**************************************************************************************************/
-void calculate_cube_display_output();
+void calculate_shape_display_output();
 
 /**************************************************************************************************/
 /**
@@ -147,61 +147,108 @@ float calculate_z_rotation(float cube_i, float cube_j, float cube_k)
            cube_i * sin(rotation_angle_B);
 }
 
-int calculate_x_coordinate_3d_projection(float temporary_inverse_z, float temporary_cube_x)
+int calculate_x_coordinate_3d_projection(float temporary_inverse_z, float temporary_x)
 {
     return (int)(DISPLAY_WIDTH / 2 +
-                (display_field_of_view * temporary_inverse_z * temporary_cube_x * display_aspect_ratio)
+                (display_field_of_view * temporary_inverse_z * temporary_x * display_aspect_ratio)
                 - display_x_offset);
 }
 
-int calculate_y_coordinate_3d_projection(float temporary_inverse_z, float temporary_cube_y)
+int calculate_y_coordinate_3d_projection(float temporary_inverse_z, float temporary_y)
 {
     return (int)(DISPLAY_HEIGHT / 2 +
-                (display_field_of_view * temporary_inverse_z * temporary_cube_y)
+                (display_field_of_view * temporary_inverse_z * temporary_y)
                 + display_y_offset);
 }
 
-void calculate_cube_display_output()
+void calculate_shape_display_output()
 {
-    // float ;
-    // float ;
+    ShapeDimensions *dim = &current_shape->dimensions;
 
-    for (float cube_x_position = -cube_width;  cube_x_position < cube_width; cube_x_position += display_cube_density)
+    // Front face (z = -z_half_size)
+    for (float x = -dim->x_half_size; x < dim->x_half_size; x += display_density)
     {
-        for (float cube_y_position = -cube_width; cube_y_position < cube_width; cube_y_position += display_cube_density)
+        for (float y = -dim->y_half_size; y < dim->y_half_size; y += display_density)
         {
-            // Front face
-            calculate_surface_render(cube_x_position, cube_y_position, -cube_width, '@');
+            float u = (x + dim->x_half_size) / (2.0f * dim->x_half_size);
+            float v = (y + dim->y_half_size) / (2.0f * dim->y_half_size);
+            char ch = get_face_character(&current_shape->faces[0], u, v, '@');
+            calculate_surface_render(x, y, -dim->z_half_size, ch);
+        }
+    }
 
-            // Right face
-            calculate_surface_render(cube_width, cube_y_position, cube_x_position, '$');
+    // Right face (x = +x_half_size)
+    for (float z = -dim->z_half_size; z < dim->z_half_size; z += display_density)
+    {
+        for (float y = -dim->y_half_size; y < dim->y_half_size; y += display_density)
+        {
+            float u = (z + dim->z_half_size) / (2.0f * dim->z_half_size);
+            float v = (y + dim->y_half_size) / (2.0f * dim->y_half_size);
+            char ch = get_face_character(&current_shape->faces[1], u, v, '$');
+            calculate_surface_render(dim->x_half_size, y, z, ch);
+        }
+    }
 
-            // Left face
-            calculate_surface_render(-cube_width, cube_y_position, -cube_x_position, '~');
+    // Left face (x = -x_half_size)
+    for (float z = -dim->z_half_size; z < dim->z_half_size; z += display_density)
+    {
+        for (float y = -dim->y_half_size; y < dim->y_half_size; y += display_density)
+        {
+            float u = (-z + dim->z_half_size) / (2.0f * dim->z_half_size);
+            float v = (y + dim->y_half_size) / (2.0f * dim->y_half_size);
+            char ch = get_face_character(&current_shape->faces[2], u, v, '~');
+            calculate_surface_render(-dim->x_half_size, y, -z, ch);
+        }
+    }
 
-            // Back face
-            calculate_surface_render(-cube_x_position, cube_y_position, cube_width, '#');
+    // Back face (z = +z_half_size)
+    for (float x = -dim->x_half_size; x < dim->x_half_size; x += display_density)
+    {
+        for (float y = -dim->y_half_size; y < dim->y_half_size; y += display_density)
+        {
+            float u = (-x + dim->x_half_size) / (2.0f * dim->x_half_size);
+            float v = (y + dim->y_half_size) / (2.0f * dim->y_half_size);
+            char ch = get_face_character(&current_shape->faces[3], u, v, '#');
+            calculate_surface_render(-x, y, dim->z_half_size, ch);
+        }
+    }
 
-            // Bottom face
-            calculate_surface_render(cube_x_position, -cube_width, -cube_y_position, ';');
+    // Bottom face (y = -y_half_size)
+    for (float x = -dim->x_half_size; x < dim->x_half_size; x += display_density)
+    {
+        for (float z = -dim->z_half_size; z < dim->z_half_size; z += display_density)
+        {
+            float u = (x + dim->x_half_size) / (2.0f * dim->x_half_size);
+            float v = (-z + dim->z_half_size) / (2.0f * dim->z_half_size);
+            char ch = get_face_character(&current_shape->faces[4], u, v, ';');
+            calculate_surface_render(x, -dim->y_half_size, -z, ch);
+        }
+    }
 
-            // Top face
-            calculate_surface_render(cube_x_position, cube_width, cube_y_position, '+');
+    // Top face (y = +y_half_size)
+    for (float x = -dim->x_half_size; x < dim->x_half_size; x += display_density)
+    {
+        for (float z = -dim->z_half_size; z < dim->z_half_size; z += display_density)
+        {
+            float u = (x + dim->x_half_size) / (2.0f * dim->x_half_size);
+            float v = (z + dim->z_half_size) / (2.0f * dim->z_half_size);
+            char ch = get_face_character(&current_shape->faces[5], u, v, '+');
+            calculate_surface_render(x, dim->y_half_size, z, ch);
         }
     }
 }
 
-void calculate_surface_render(float cube_x, float cube_y, float cube_z, int ascii_character) {
-    float rotated_x = calculate_x_rotation(cube_x, cube_y, cube_z);
-    float rotated_y = calculate_y_rotation(cube_x, cube_y, cube_z);
-    float rotated_z = calculate_z_rotation(cube_x, cube_y, cube_z) + display_view_distance;
+void calculate_surface_render(float x, float y, float z, int ascii_character) {
+    float rotated_x = calculate_x_rotation(x, y, z);
+    float rotated_y = calculate_y_rotation(x, y, z);
+    float rotated_z = calculate_z_rotation(x, y, z) + display_view_distance;
 
     inverse_z = 1 / rotated_z;
 
-    cube_x_coordinate_3d_projected = calculate_x_coordinate_3d_projection(inverse_z, rotated_x);
-    cube_y_coordinate_3d_projected = calculate_y_coordinate_3d_projection(inverse_z, rotated_y);
+    x_coordinate_3d_projected = calculate_x_coordinate_3d_projection(inverse_z, rotated_x);
+    y_coordinate_3d_projected = calculate_y_coordinate_3d_projection(inverse_z, rotated_y);
 
-    buffers_index = cube_x_coordinate_3d_projected + cube_y_coordinate_3d_projected * DISPLAY_WIDTH;
+    buffers_index = x_coordinate_3d_projected + y_coordinate_3d_projected * DISPLAY_WIDTH;
 
     if (buffers_index >= 0 && buffers_index < DISPLAY_WIDTH * DISPLAY_HEIGHT) {
         if (inverse_z > z_depth_buffer[buffers_index]) {
@@ -211,6 +258,9 @@ void calculate_surface_render(float cube_x, float cube_y, float cube_z, int asci
   }
 }
 int main() {
+    // Initialize with pizza box - change to &regular_cube or &rectangular_box to see different shapes
+    current_shape = &pizza_box;
+
     printf("\x1b[2J");  // Clear screen
 
     while(1)
@@ -229,7 +279,7 @@ int main() {
         // Here, we set the z-depth buffer to 0
         memset(z_depth_buffer, 0, DISPLAY_WIDTH * DISPLAY_HEIGHT * 4);
 
-        calculate_cube_display_output();
+        calculate_shape_display_output();
 
         printf("\x1b[H");  // Reset cursor to top-left position
 

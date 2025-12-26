@@ -1,0 +1,143 @@
+#ifndef SPRITES_H
+#define SPRITES_H
+
+/*------------------------------------------------------------------------------------------------*/
+// HEADERS                                                                                        */
+/*------------------------------------------------------------------------------------------------*/
+
+#include <stdbool.h>
+#include "terminal.h"
+
+/*------------------------------------------------------------------------------------------------*/
+// GLOBAL VARIABLES                                                                               */
+/*------------------------------------------------------------------------------------------------*/
+
+// Heads
+
+//  (•‿•)
+
+//  (^-^)
+
+//  (ᵔ‿ᵔ)
+
+//  (✿◠‿◠) //Unionville
+
+//  (o_o)
+
+//  (-_-)
+
+// Bodies
+
+//  (^_^)
+//  {   }
+//   " "
+
+//  (o_o)
+//  {   }
+//   ' '
+
+//  (-_-)
+//  {   }
+//   ` `
+
+/*------------------------------------------------------------------------------------------------*/
+// CLASS DECLARATIONS                                                                             */
+/*------------------------------------------------------------------------------------------------*/
+
+typedef struct
+{
+    int x, y;
+    int velocity_y;
+    bool is_jumping;
+} sprite;
+
+/*------------------------------------------------------------------------------------------------*/
+// FUNCTION DECLARATIONS                                                                          */
+/*------------------------------------------------------------------------------------------------*/
+
+/**************************************************************************************************/
+/**
+ * @name    init_sprite
+ * @brief   Initializes a sprite structure with default values for position and state.
+ *
+ *          Initially the character is at to units from the left border, and 4 units from the bottom
+ *          border, and not jumping.
+ *
+ * @param   character This pointer type points to the sprite structure to be initialized.
+ * @note    Pointer type is used here to modify the original sprite structure passed to the
+ *          function.
+ *
+ * @return  void
+ */
+/**************************************************************************************************/
+void initialize_sprite(sprite *character);
+
+/**************************************************************************************************/
+/**
+ * @name
+ * @brief
+ *
+ *
+ * @param character
+ *
+ */
+/**************************************************************************************************/
+void update_sprite_position(sprite *character);
+
+/**************************************************************************************************/
+/**
+ * @name
+ * @brief
+ *
+ *
+ * @param character
+ *
+ */
+/**************************************************************************************************/
+void sprite_jump(sprite *character);
+
+/**************************************************************************************************/
+/**
+ * @name
+ * @brief
+ *
+ *
+ * @param terminal_display
+ * @param ryan
+ *
+ */
+/**************************************************************************************************/
+void draw_ryan_sprite(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY_WIDTH],
+                      sprite *ryan);
+
+/**************************************************************************************************/
+/**
+ * @name
+ * @brief
+ *
+ *
+ * @param terminal_display
+ * @param ryan
+ *
+ */
+/**************************************************************************************************/
+void draw_ryan_buff_sprite(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY_WIDTH],
+                      sprite *ryan);
+
+/**************************************************************************************************/
+/**
+ * @name
+ * @brief
+ *
+ *
+ * @param terminal_display
+ * @param ryan
+ *
+ */
+/**************************************************************************************************/
+void draw_ryan_burgerking(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY_WIDTH],
+                      sprite *ryan);
+
+#endif // SPRITES_H
+
+// End of sprites.h

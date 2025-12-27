@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 # Project name and version
 project(Dino VERSION 0.1 LANGUAGES C)
 
+# Set default build type if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+endif()
+
 # Set C standard
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -17,6 +22,15 @@ set(SOURCES
     src/sprite.c
     src/terminal.c
     src/scenes.c
+    src/scenes/scene_zero.c
+    src/scenes/scene_one.c
+    src/scenes/scene_two.c
+    src/scenes/scene_three.c
+    src/scenes/scene_four.c
+    src/scenes/scene_five.c
+    src/scenes/scene_six.c
+    src/scenes/scene_seven.c
+    src/scenes/scene_eight.c
     mylove.c
 )
 
@@ -29,6 +43,7 @@ set(HEADERS
     include/sprites.h
     include/terminal.h
     include/textures.h
+    include/common.h
 )
 
 # Create executable

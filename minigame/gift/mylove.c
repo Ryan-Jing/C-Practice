@@ -38,9 +38,6 @@
 /*------------------------------------------------------------------------------------------------*/
 
 #define NUM_CUTSCENES 9
-
-// DEBUG: Set to desired cutscene start time in seconds (0 = normal, 180 = cutscene 6, 210 = cutscene 7)
-// Comment out or set to 0 for normal playback
 #define DEBUG_START_TIME_SECONDS 400
 
 /*------------------------------------------------------------------------------------------------*/
@@ -64,7 +61,7 @@ typedef enum
 
 int main()
 {
-    srand(time(NULL)); // Seed random number generator
+    srand(time(NULL));
 
     sprite character;
     background_system background;
@@ -77,7 +74,7 @@ int main()
     int frame_count = 0;
 #endif
     float display_scroll_speed = 1.5;
-    int active_cutscene_index = -1;  // No active cutscene
+    int active_cutscene_index = -1;
 
     initialize_sprite(&character);
     initialize_background(&background);
@@ -85,7 +82,6 @@ int main()
     enable_raw_mode();
     enter_alternate_screen();
 
-    // Define all cutscenes with trigger times in seconds (15 seconds between each)
     cutscene_definition cutscenes[NUM_CUTSCENES] =
     {
         {
@@ -167,7 +163,6 @@ int main()
                 }
                 else if (current_game_state == GAME_STATE_CUTSCENE)
                 {
-                    // Space can skip dialogue, typewrite effect
                     cutscenes[active_cutscene_index].status.current_dialogue++;
                     cutscenes[active_cutscene_index].status.dialogue_char_count = 0;
                 }
@@ -214,16 +209,14 @@ int main()
             {
                 if (active_cutscene_index == NUM_CUTSCENES - 1)
                 {
-                    terminate_execution = true; // End game after final cutscene
+                    terminate_execution = true;
                 }
                 else if (active->status.chain_to_next)
                 {
-                    // Immediately trigger next cutscene
                     int next_index = active_cutscene_index + 1;
                     cutscenes[next_index].has_triggered = true;
                     cutscenes[next_index].init(&cutscenes[next_index].status, &character);
                     active_cutscene_index = next_index;
-                    // Stay in GAME_STATE_CUTSCENE
                 }
                 else
                 {

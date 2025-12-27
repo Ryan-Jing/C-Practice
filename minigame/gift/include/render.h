@@ -43,6 +43,21 @@
 
 /**************************************************************************************************/
 /**
+ * @name    draw_scene_background
+ * @brief   Initializes the terminal display and draws all background elements including
+ *          ground, mountain base, parallax layers (clouds, mountains, houses, trees), and particles.
+ *
+ * @param   terminal_display  The 2D character array representing the terminal screen
+ * @param   bg               Pointer to the background system containing parallax layers
+ *
+ * @return  void
+ */
+/**************************************************************************************************/
+void draw_scene_background(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY_WIDTH],
+                           background_system *bg);
+
+/**************************************************************************************************/
+/**
  * @name    draw_object
  * @brief   General-purpose function to draw any ASCII sprite to the terminal display buffer.
  *          Loops through the sprite's dimensions and copies each character to the display.

@@ -42,6 +42,74 @@
 /* FUNCTION DEFINITIONS                                                                           */
 /*------------------------------------------------------------------------------------------------*/
 
+void draw_scene_background(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY_WIDTH],
+                           background_system *bg)
+{
+    // Initialize display with spaces
+    for (int y = 0; y < TERMINAL_DISPLAY_HEIGHT; y++)
+    {
+        for (int x = 0; x < TERMINAL_DISPLAY_WIDTH; x++)
+        {
+            terminal_display[y][x] = ' ';
+        }
+    }
+
+    // Draw ground
+    for (int x = 0; x < TERMINAL_DISPLAY_WIDTH; x++)
+    {
+        terminal_display[TERMINAL_DISPLAY_HEIGHT - 1][x] = '=';
+    }
+
+    // Draw background mountain base
+    for (int x = 0; x < TERMINAL_DISPLAY_WIDTH; x++)
+    {
+        terminal_display[TERMINAL_DISPLAY_HEIGHT - 11][x] = '.';
+    }
+
+    // Draw parallax layers
+    for (int layer = 0; layer < NUM_LAYERS; layer++)
+    {
+        for (int i = 0; i < bg->layers[layer].element_count; i++)
+        {
+            int element_x = (int)bg->layers[layer].elements[i].x;
+            const ascii_object *texture = bg->layers[layer].elements[i].texture;
+
+            int element_y;
+            if (layer == LAYER_CLOUDS)
+            {
+                element_y = 1 + (i % 3) * 3;
+            }
+            else if (layer == LAYER_MOUNTAINS)
+            {
+                element_y = TERMINAL_DISPLAY_HEIGHT - texture->height - 10;
+            }
+            else if (layer == LAYER_HOUSES)
+            {
+                element_y = TERMINAL_DISPLAY_HEIGHT - texture->height - 3;
+            }
+            else
+            {
+                element_y = TERMINAL_DISPLAY_HEIGHT - texture->height - 1;
+            }
+
+            draw_object(terminal_display, texture, element_x, element_y);
+        }
+    }
+
+    // Draw particles
+    for (int y = 0; y < TERMINAL_DISPLAY_HEIGHT - 1; y++)
+    {
+        if (y % 3 == 0)
+        {
+            int particle_x = (int)bg->particle_positions[y];
+            if (particle_x >= 0 && particle_x < TERMINAL_DISPLAY_WIDTH)
+            {
+                terminal_display[y][particle_x] = '.';
+            }
+        }
+    }
+}
+
 void draw_object(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY_WIDTH],
                       const ascii_object *sprite, int x, int y)
 {
@@ -72,7 +140,7 @@ void draw_sprite(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY
 
     //
 
-        // Row 0: (n_n)
+    // Row 0: (n_n)
     if (character->y >= 0 && character->y < TERMINAL_DISPLAY_HEIGHT)
     {
         if (character->x >= 0 && character->x < TERMINAL_DISPLAY_WIDTH)

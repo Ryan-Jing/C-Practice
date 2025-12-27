@@ -65,12 +65,13 @@ void initialize_background(background_system *background)
     background->layers[0].elements[1].texture = &cloud_large;
     background->layers[0].elements[2].x = 65;
     background->layers[0].elements[2].texture = &cloud_small;
+
     // Layer 1: Mountains (medium-far)
     background->layers[1].speed_multiplier = 0.3f;
     strcpy(background->layers[1].color_code, "\033[37m");  // White
     background->layers[1].element_count = 2;
     background->layers[1].elements[0].x = 15;
-    background->layers[1].elements[0].texture = &mountain_twin_peaks;  // From sprites.h
+    background->layers[1].elements[0].texture = &mountain_twin_peaks;
     background->layers[1].elements[1].x = 55;
     background->layers[1].elements[1].texture = &mountain_small;
 

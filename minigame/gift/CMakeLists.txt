@@ -31,6 +31,7 @@ set(SOURCES
     src/scenes/scene_six.c
     src/scenes/scene_seven.c
     src/scenes/scene_eight.c
+    src/scenes/scene_loop.c
     mylove.c
 )
 

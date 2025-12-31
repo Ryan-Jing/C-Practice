@@ -112,6 +112,15 @@ void draw_dialogue(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPL
                    const char *text, int dialogue_y, int chars_to_show);
 
 /*------------------------------------------------------------------------------------------------*/
+// CUTSCENE LOOP                                                                                  */
+/*------------------------------------------------------------------------------------------------*/
+
+void init_cutscene_loop(cutscene_status *cutscene, sprite *player);
+void update_cutscene_loop(cutscene_status *cutscene, sprite *player, background_system *bg);
+void render_cutscene_loop(cutscene_status *cutscene,
+                          sprite *player, background_system *background);
+
+/*------------------------------------------------------------------------------------------------*/
 // CUTSCENE 0: LETTER                                                                             */
 /*------------------------------------------------------------------------------------------------*/
 
@@ -153,7 +162,7 @@ void update_cutscene_look(cutscene_status *cs, sprite *player, background_system
 void render_cutscene_look(cutscene_status *cs, sprite *player, background_system *bg);
 
 /*------------------------------------------------------------------------------------------------*/
-// CUTSCENE 5: Buff 1Ryan                                                                          */
+// CUTSCENE 5: Buff Ryan                                                                          */
 /*------------------------------------------------------------------------------------------------*/
 
 void init_cutscene_buff_ryan(cutscene_status *cs, sprite *player);

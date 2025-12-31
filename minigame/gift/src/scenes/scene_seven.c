@@ -41,7 +41,7 @@ void init_cutscene_garden(cutscene_status *cutscene, sprite *player)
     cutscene->finished = false;
     cutscene->chain_to_next = false;
     cutscene->phase = 0;
-    cutscene->garden_x = TERMINAL_DISPLAY_WIDTH + 360;
+    cutscene->garden_x = TERMINAL_DISPLAY_WIDTH + 900;
 }
 
 void update_cutscene_garden(cutscene_status *cutscene, sprite *player, background_system *bg)
@@ -105,7 +105,7 @@ void update_cutscene_garden(cutscene_status *cutscene, sprite *player, backgroun
         update_background(bg, 1.5);
         cutscene->garden_x -= 1.5f * 0.9f;
 
-        if (cutscene->garden_x <= player->x)
+        if (cutscene->garden_x <= player->x - 3)
         {
             cutscene->phase = 4;
             cutscene->frame_timer = 0;
@@ -213,7 +213,7 @@ void render_cutscene_garden(cutscene_status *cutscene, sprite *player, backgroun
     {
         // In the garden dialogue
         const char *dialogues_phase4[] = {
-            "Ryan: Look! All the beggies and and all the flowers. Our garden my love.\n"
+            "Ryan: Look! All the veggies and and all the flowers. Our garden my love.\n"
             "A wonderful land that we can grow and cultivate together.",
             "Rachell: <3",
             "Ryan: I want to stay in this garden with you forever and ever. Taking care of the plants and animals around us.\n"

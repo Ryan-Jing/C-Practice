@@ -38,7 +38,7 @@
 /*------------------------------------------------------------------------------------------------*/
 
 #define NUM_CUTSCENES 9
-#define DEBUG_START_TIME_SECONDS 400
+// #define DEBUG_START_TIME_SECONDS 400
 
 /*------------------------------------------------------------------------------------------------*/
 /* GLOBAL VARIABLES                                                                               */
@@ -66,6 +66,8 @@ int main()
     sprite character;
     background_system background;
     game_state current_game_state = GAME_STATE_PLAYING;
+    char keyboard_input;
+    int program_mode = 0;
 
     bool terminate_execution = false;
 #ifdef DEBUG_START_TIME_SECONDS
@@ -79,157 +81,246 @@ int main()
     initialize_sprite(&character);
     initialize_background(&background);
 
+    // Mode selection before raw mode (blocking input)
+    printf("Press '1' to open letter, '2' for continuous mode, then press enter:\n");
+    fflush(stdout);
+    keyboard_input = getchar();
+
+    if (keyboard_input == '1')
+    {
+        program_mode = 1;
+    }
+    else
+    {
+        program_mode = 2;
+    }
+
     enable_raw_mode();
     enter_alternate_screen();
 
-    cutscene_definition cutscenes[NUM_CUTSCENES] =
+    if (program_mode == 1)
     {
+        cutscene_definition cutscenes[NUM_CUTSCENES] =
         {
-            .trigger_time_seconds = 0.0f,
-            .has_triggered = false,
-            .init = init_cutscene_intro,
-            .update = update_cutscene_intro,
-            .render = render_cutscene_intro
-        },
-        {
-            .trigger_time_seconds = 60.0f,
-            .has_triggered = false,
-            .init = init_cutscene_greeting,
-            .update = update_cutscene_greeting,
-            .render = render_cutscene_greeting
-        },
-        {
-            .trigger_time_seconds = 140.0f,
-            .has_triggered = false,
-            .init = init_cutscene_second,
-            .update = update_cutscene_second,
-            .render = render_cutscene_second
-        },
-        {
-            .trigger_time_seconds = 210.0f,
-            .has_triggered = false,
-            .init = init_cutscene_bk_walk,
-            .update = update_cutscene_bk_walk,
-            .render = render_cutscene_bk_walk
-        },
-        {
-            .trigger_time_seconds = 300.0f,
-            .has_triggered = false,
-            .init = init_cutscene_look,
-            .update = update_cutscene_look,
-            .render = render_cutscene_look
-        },
-        {
-            .trigger_time_seconds = 320.0f,
-            .has_triggered = false,
-            .init = init_cutscene_buff_ryan,
-            .update = update_cutscene_buff_ryan,
-            .render = render_cutscene_buff_ryan
-        },
-        {
-            .trigger_time_seconds = 360.0f,
-            .has_triggered = false,
-            .init = init_cutscene_swingset,
-            .update = update_cutscene_swingset,
-            .render = render_cutscene_swingset
-        },
-        {
-            .trigger_time_seconds = 460.0f,
-            .has_triggered = false,
-            .init = init_cutscene_garden,
-            .update = update_cutscene_garden,
-            .render = render_cutscene_garden
-        },
-        {
-            .trigger_time_seconds = 560.0f,
-            .has_triggered = false,
-            .init = init_cutscene_the_end,
-            .update = update_cutscene_the_end,
-            .render = render_cutscene_the_end
-        }
-    };
-
-    while(!terminate_execution)
-    {
-        char keyboard_input;
-
-        if (read(STDIN_FILENO, &keyboard_input, 1) == 1)
-        {
-            if (keyboard_input == ' ')
             {
-                if (current_game_state == GAME_STATE_PLAYING)
-                {
-                    sprite_jump(&character);
-                }
-                else if (current_game_state == GAME_STATE_CUTSCENE)
-                {
-                    cutscenes[active_cutscene_index].status.current_dialogue++;
-                    cutscenes[active_cutscene_index].status.dialogue_char_count = 0;
-                }
+                .trigger_time_seconds = 0.0f,
+                .has_triggered = false,
+                .init = init_cutscene_intro,
+                .update = update_cutscene_intro,
+                .render = render_cutscene_intro
+            },
+            {
+                .trigger_time_seconds = 60.0f,
+                .has_triggered = false,
+                .init = init_cutscene_greeting,
+                .update = update_cutscene_greeting,
+                .render = render_cutscene_greeting
+            },
+            {
+                .trigger_time_seconds = 140.0f,
+                .has_triggered = false,
+                .init = init_cutscene_second,
+                .update = update_cutscene_second,
+                .render = render_cutscene_second
+            },
+            {
+                .trigger_time_seconds = 210.0f,
+                .has_triggered = false,
+                .init = init_cutscene_bk_walk,
+                .update = update_cutscene_bk_walk,
+                .render = render_cutscene_bk_walk
+            },
+            {
+                .trigger_time_seconds = 300.0f,
+                .has_triggered = false,
+                .init = init_cutscene_look,
+                .update = update_cutscene_look,
+                .render = render_cutscene_look
+            },
+            {
+                .trigger_time_seconds = 320.0f,
+                .has_triggered = false,
+                .init = init_cutscene_buff_ryan,
+                .update = update_cutscene_buff_ryan,
+                .render = render_cutscene_buff_ryan
+            },
+            {
+                .trigger_time_seconds = 360.0f,
+                .has_triggered = false,
+                .init = init_cutscene_swingset,
+                .update = update_cutscene_swingset,
+                .render = render_cutscene_swingset
+            },
+            {
+                .trigger_time_seconds = 460.0f,
+                .has_triggered = false,
+                .init = init_cutscene_garden,
+                .update = update_cutscene_garden,
+                .render = render_cutscene_garden
+            },
+            {
+                .trigger_time_seconds = 560.0f,
+                .has_triggered = false,
+                .init = init_cutscene_the_end,
+                .update = update_cutscene_the_end,
+                .render = render_cutscene_the_end
             }
-            else if (keyboard_input == 'q' || keyboard_input == 'Q')
-            {
-                terminate_execution = true;
-            }
-        }
+        };
 
-        float current_time = frames_to_seconds(frame_count);
-
-        if (current_game_state == GAME_STATE_PLAYING)
+        while(!terminate_execution)
         {
-            for (int i = 0; i < NUM_CUTSCENES; i++)
+            if (read(STDIN_FILENO, &keyboard_input, 1) == 1)
             {
-                if (!cutscenes[i].has_triggered &&
-                    current_time >= cutscenes[i].trigger_time_seconds)
+                if (keyboard_input == ' ')
                 {
-                    current_game_state = GAME_STATE_CUTSCENE;
-                    active_cutscene_index = i;
-                    cutscenes[i].has_triggered = true;
-                    cutscenes[i].init(&cutscenes[i].status, &character);
-                    break;
+                    if (current_game_state == GAME_STATE_PLAYING)
+                    {
+                        sprite_jump(&character);
+                    }
+                    else if (current_game_state == GAME_STATE_CUTSCENE)
+                    {
+                        cutscenes[active_cutscene_index].status.current_dialogue++;
+                        cutscenes[active_cutscene_index].status.dialogue_char_count = 0;
+                    }
                 }
-            }
-        }
-
-        if (current_game_state == GAME_STATE_PLAYING)
-        {
-            update_sprite_position(&character);
-            update_background(&background, display_scroll_speed);
-            render(&character, &background);
-        }
-
-        else if (current_game_state == GAME_STATE_CUTSCENE)
-        {
-            cutscene_definition *active = &cutscenes[active_cutscene_index];
-
-            active->update(&active->status, &character, &background);
-            active->render(&active->status, &character, &background);
-
-            if (active->status.finished)
-            {
-                if (active_cutscene_index == NUM_CUTSCENES - 1)
+                else if (keyboard_input == 'q' || keyboard_input == 'Q')
                 {
                     terminate_execution = true;
                 }
-                else if (active->status.chain_to_next)
+            }
+
+            float current_time = frames_to_seconds(frame_count);
+
+            if (current_game_state == GAME_STATE_PLAYING)
+            {
+                for (int i = 0; i < NUM_CUTSCENES; i++)
                 {
-                    int next_index = active_cutscene_index + 1;
-                    cutscenes[next_index].has_triggered = true;
-                    cutscenes[next_index].init(&cutscenes[next_index].status, &character);
-                    active_cutscene_index = next_index;
-                }
-                else
-                {
-                    current_game_state = GAME_STATE_PLAYING;
-                    active_cutscene_index = -1;
+                    if (!cutscenes[i].has_triggered &&
+                        current_time >= cutscenes[i].trigger_time_seconds)
+                    {
+                        current_game_state = GAME_STATE_CUTSCENE;
+                        active_cutscene_index = i;
+                        cutscenes[i].has_triggered = true;
+                        cutscenes[i].init(&cutscenes[i].status, &character);
+                        break;
+                    }
                 }
             }
+
+            if (current_game_state == GAME_STATE_PLAYING)
+            {
+                update_sprite_position(&character);
+                update_background(&background, display_scroll_speed);
+                render(&character, &background);
+            }
+
+            else if (current_game_state == GAME_STATE_CUTSCENE)
+            {
+                cutscene_definition *active = &cutscenes[active_cutscene_index];
+
+                active->update(&active->status, &character, &background);
+                active->render(&active->status, &character, &background);
+
+                if (active->status.finished)
+                {
+                    if (active_cutscene_index == NUM_CUTSCENES - 1)
+                    {
+                        terminate_execution = true;
+                    }
+                    else if (active->status.chain_to_next)
+                    {
+                        int next_index = active_cutscene_index + 1;
+                        cutscenes[next_index].has_triggered = true;
+                        cutscenes[next_index].init(&cutscenes[next_index].status, &character);
+                        active_cutscene_index = next_index;
+                    }
+                    else
+                    {
+                        current_game_state = GAME_STATE_PLAYING;
+                        active_cutscene_index = -1;
+                    }
+                }
+            }
+
+            usleep(FRAME_TIME_US);
+
+            frame_count++;
         }
-
-        usleep(FRAME_TIME_US);
-
-        frame_count++;
     }
+    else if (program_mode == 2)
+    {
+        cutscene_definition cutscenes[1] =
+        {
+            {
+                .init = init_cutscene_loop,
+                .update = update_cutscene_loop,
+                .render = render_cutscene_loop
+            }
+        };
+
+        float next_cutscene_trigger = (float)((rand() % 151) + 30);
+
+        while(!terminate_execution)
+        {
+            if (read(STDIN_FILENO, &keyboard_input, 1) == 1)
+            {
+                if (keyboard_input == ' ')
+                {
+                    if (current_game_state == GAME_STATE_PLAYING)
+                    {
+                        sprite_jump(&character);
+                    }
+                    else if (current_game_state == GAME_STATE_CUTSCENE)
+                    {
+                        cutscenes[0].status.current_dialogue++;
+                        cutscenes[0].status.dialogue_char_count = 0;
+                    }
+                }
+                else if (keyboard_input == 'q' || keyboard_input == 'Q')
+                {
+                    terminate_execution = true;
+                }
+            }
+
+            float current_time = frames_to_seconds(frame_count);
+
+            if (current_game_state == GAME_STATE_PLAYING)
+            {
+                if (current_time >= next_cutscene_trigger)
+                {
+                    current_game_state = GAME_STATE_CUTSCENE;
+                    cutscenes[0].init(&cutscenes[0].status, &character);
+                }
+            }
+
+            if (current_game_state == GAME_STATE_PLAYING)
+            {
+                update_sprite_position(&character);
+                update_background(&background, display_scroll_speed);
+                render(&character, &background);
+            }
+
+            else if (current_game_state == GAME_STATE_CUTSCENE)
+            {
+                cutscene_definition *active = &cutscenes[0];
+
+                active->update(&active->status, &character, &background);
+                active->render(&active->status, &character, &background);
+
+                if (active->status.finished)
+                {
+                    current_game_state = GAME_STATE_PLAYING;
+                    next_cutscene_trigger = current_time + (float)((rand() % 151) + 30);
+                }
+            }
+
+            usleep(FRAME_TIME_US);
+
+            frame_count++;
+        }
+    }
+
+
 
     disable_raw_mode();
     printf("MWAH!!\n");

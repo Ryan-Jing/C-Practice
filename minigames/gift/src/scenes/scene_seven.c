@@ -153,10 +153,10 @@ void update_cutscene_garden(cutscene_status *cutscene, sprite *player, backgroun
         break;
 
     case 6:
-        player->x -= 2;
-        cutscene->ryan.x -= 2;
+        player->x += 2;
+        cutscene->ryan.x += 2;
 
-        if (player->x < -10 && cutscene->ryan.x < -10)
+        if (player->x > TERMINAL_DISPLAY_WIDTH + 10 && cutscene->ryan.x > TERMINAL_DISPLAY_WIDTH + 10)
         {
             cutscene->finished = true;
             cutscene->chain_to_next = true;

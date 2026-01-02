@@ -26,13 +26,18 @@
 /* MACROS                                                                                         */
 /*------------------------------------------------------------------------------------------------*/
 
-
+#define WORK_TIMER_DEFAULT_MINUTES 25
+#define BREAK_TIMER_DEFAULT_MINUTES 5
 
 /*------------------------------------------------------------------------------------------------*/
 /* GLOBAL VARIABLES                                                                               */
 /*------------------------------------------------------------------------------------------------*/
 
-
+typedef enum
+{
+    timer_work,
+    timer_break
+} timer_type_t;
 
 /*------------------------------------------------------------------------------------------------*/
 /* FUNCTION PROTOTYPES                                                                            */
@@ -59,14 +64,25 @@ void update_sketchybar(const char *label, const char *icon);
 
 /**************************************************************************************************/
 /**
- * @name    play_sound_notification
- * @brief   Plays a sound notifying that the pomodoro timer has changed
+ * @name    play_work_sound_notification
+ * @brief   Plays a sound notifying that the work timer has changed
  *
  *
  *
  */
 /**************************************************************************************************/
-void play_sound_notification();
+void play_work_sound_notification();
+
+/**************************************************************************************************/
+/**
+ * @name    play_break_sound_notification
+ * @brief   Plays a sound notifying that the break timer has changed
+ *
+ *
+ *
+ */
+/**************************************************************************************************/
+void play_break_sound_notification();
 
 /**************************************************************************************************/
 /**
@@ -77,10 +93,11 @@ void play_sound_notification();
  *
  * @param timer_minutes
  * @param icon
+ * @param timer_type
  *
  */
 /**************************************************************************************************/
-void run_timer(int timer_minutes, const char *icon);
+void run_timer(int timer_minutes, const char *icon, timer_type_t timer_type);
 
 /*------------------------------------------------------------------------------------------------*/
 /* FUNCTION DEFINITIONS                                                                           */
@@ -99,19 +116,32 @@ void update_sketchybar(const char *label, const char *icon)
     system(sketchybar_command);
 }
 
-void play_sound_notification()
+void play_work_sound_notification()
 {
     // Play a built in Apple library chime sound
-    system("afplay /System/Library/Sounds/Glass.aiff &");
+    system("afplay /System/Library/Sounds/Pop.aiff &");
 }
 
-void run_timer(int timer_minutes, const char *icon)
+void play_break_sound_notification()
+{
+    // Play a built in Apple library chime sound
+    system("afplay /System/Library/Sounds/Purr.aiff &");
+}
+
+void run_timer(int timer_minutes, const char *icon, timer_type_t timer_type)
 {
     time_t start_time = time(NULL);
     time_t end_time = start_time + (timer_minutes * 60);
     int last_remaining_timestamp = -1;
 
-    play_sound_notification();
+    if (timer_type == timer_work)
+    {
+        play_work_sound_notification();
+    }
+    else if (timer_type == timer_break)
+    {
+        play_break_sound_notification();
+    }
 
     while (1)
     {
@@ -143,9 +173,8 @@ void run_timer(int timer_minutes, const char *icon)
 
 int main(int argc, char *argv[])
 {
-    float work_timer_minutes = 25.0;
-    float break_timer_minutes = 5.0;
-
+    int work_timer_minutes = WORK_TIMER_DEFAULT_MINUTES;
+    int break_timer_minutes = BREAK_TIMER_DEFAULT_MINUTES;
     // atoi is a C standard library function that converts a string to an integer
     if (argc >= 2)
     {
@@ -160,10 +189,10 @@ int main(int argc, char *argv[])
     while (1)
     {
         // Monocraft Nerd Font hourglass icon: ⌛ (U+231B)
-        run_timer(work_timer_minutes, "\u231B");
+        run_timer(work_timer_minutes, "\u231B", timer_work);
 
         // Monocraft Nerd Font scissors icon: ✂ (U+2702)
-        run_timer(break_timer_minutes, "\u2702");
+        run_timer(break_timer_minutes, "\u2702", timer_break);
     }
 
     return 0;

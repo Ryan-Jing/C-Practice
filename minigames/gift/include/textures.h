@@ -46,7 +46,7 @@ static const char *cloud_lines_large[] = {
 
 static const ascii_object cloud_large = {
     .lines = cloud_lines_large,
-    .width = 17,
+    .width = 18,
     .height = 3
 };
 
@@ -72,7 +72,7 @@ static const char *mountain_lines_small[] = {
 
 static const ascii_object mountain_small = {
     .lines = mountain_lines_small,
-    .width = 15,
+    .width = 16,
     .height = 5
 };
 
@@ -95,7 +95,7 @@ static const char *mountain_lines_large[] = {
 
 static const ascii_object mountain_large = {
     .lines = mountain_lines_large,
-    .width = 78,
+    .width = 67,
     .height = 13
 };
 
@@ -113,7 +113,7 @@ static const char *mountain_twin_peaks_lines[] = {
 
 static const ascii_object mountain_twin_peaks = {
     .lines = mountain_twin_peaks_lines,
-    .width = 40,
+    .width = 41,
     .height = 10
 };
 
@@ -142,7 +142,7 @@ static const char *house_lines[] = {
 
 static const ascii_object house = {
     .lines = house_lines,
-    .width = 9,
+    .width = 10,
     .height = 6
 };
 

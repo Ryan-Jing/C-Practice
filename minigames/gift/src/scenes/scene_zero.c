@@ -96,19 +96,19 @@ void render_cutscene_intro(cutscene_status *cutscene,
     if (cutscene->phase == 1)
     {
         const char *dialogues[] =
-        {
-            "Hi my love,\n\n"
-            "I've been working away parcticing C, to make this gift for you, my most wonderful and sweet love.\n\n"
-            "I want this to be a interactive gift for you, to remember our most lovely moments.\n\n"
-            "I hope you can come back to this when you are feeling down, and feel my love.\n\n"
-            "You are the love of my life. I love you forever.\n\n",
-            "Here is our love in C.\n\n"
-            "Ryan\n\n"
-            "...",
-            "Press q to quit, space to skip dialogue.\n\n"
-            "..."
+            {
+                "Hi my love,\n\n"
+                "I've been working away practicing C, to make this gift for you, my most wonderful and sweet love.\n\n"
+                "I want this to be a interactive gift for you, to remember our most lovely moments.\n\n"
+                "I hope you can come back to this anytime; when you are happy, when you are feeling down, you can have this to feel my love.\n\n"
+                "You are the love of my life. I love you forever.\n\n",
+                "Here is our love in C.\n\n"
+                "Ryan\n\n"
+                "...",
+                "Press q to quit, space to skip dialogue.\n\n"
+                "..."
 
-        };
+            };
 
         if (cutscene->current_dialogue < NUM_LINES_SCENE_0)
         {

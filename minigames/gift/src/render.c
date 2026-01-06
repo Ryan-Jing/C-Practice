@@ -121,6 +121,7 @@ void draw_object(char terminal_display[TERMINAL_DISPLAY_HEIGHT][TERMINAL_DISPLAY
                 x + col >= 0 && x + col < TERMINAL_DISPLAY_WIDTH)
             {
                 char ch = sprite->lines[row][col];
+                if (ch == '\0') break;
                 if (ch != ' ')
                 {
                     terminal_display[y + row][x + col] = ch;

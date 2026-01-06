@@ -52,7 +52,7 @@ void update_cutscene_the_end(cutscene_status *cutscene, sprite *player, backgrou
         cutscene->finished = true; // End after final message
     }
 
-    int dialogue_index = cutscene->frame_timer / seconds_to_frames(6.0f);
+    int dialogue_index = cutscene->frame_timer / seconds_to_frames(10.0f);
 
     if (dialogue_index > cutscene->current_dialogue)
     {

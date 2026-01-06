@@ -69,11 +69,22 @@ void initialize_background(background_system *background)
     // Layer 1: Mountains (medium-far)
     background->layers[1].speed_multiplier = 0.3f;
     strcpy(background->layers[1].color_code, "\033[37m");  // White
-    background->layers[1].element_count = 2;
-    background->layers[1].elements[0].x = 15;
-    background->layers[1].elements[0].texture = &mountain_twin_peaks;
-    background->layers[1].elements[1].x = 55;
-    background->layers[1].elements[1].texture = &mountain_small;
+    background->layers[1].element_count = 3;
+    
+    float current_x = 0;
+    for (int i = 0; i < background->layers[1].element_count; i++)
+    {
+        int mountain_choice = rand() % 3;
+        if (mountain_choice == 0)
+            background->layers[1].elements[i].texture = &mountain_small;
+        else if (mountain_choice == 1)
+            background->layers[1].elements[i].texture = &mountain_large;
+        else
+            background->layers[1].elements[i].texture = &mountain_twin_peaks;
+            
+        background->layers[1].elements[i].x = current_x;
+        current_x += (rand() % 40) + 20;
+    }
 
     // Layer 2: Houses/forests (medium-close)
     background->layers[2].speed_multiplier = 0.5f;
@@ -118,57 +129,62 @@ void update_background(background_system *background, float speed)
           for (int i = 0; i < background->layers[layer].element_count; i++)
         {
               background->layers[layer].elements[i].x -= layer_speed;
+              
+              const ascii_object *tex = background->layers[layer].elements[i].texture;
 
-              if (background->layers[layer].elements[i].x < -64) // Wrap elements back around
+              if (background->layers[layer].elements[i].x + tex->width < 0) // Wrap elements back around
               {
-                  background->layers[layer].elements[i].x = TERMINAL_DISPLAY_WIDTH + (rand() % 80);
+                  // Find the rightmost element in this layer
+                  float max_x = -1000.0f;
+                  for (int j = 0; j < background->layers[layer].element_count; j++) {
+                      float end_x = background->layers[layer].elements[j].x + background->layers[layer].elements[j].texture->width;
+                      if (end_x > max_x) {
+                          max_x = end_x;
+                      }
+                  }
 
+                  // Pick new texture first
                   if (layer == LAYER_CLOUDS)
                   {
                       if (rand() % 2 == 0)
-                      {
                         background->layers[layer].elements[i].texture = &cloud_large;
-                      }
                       else
-                      {
                         background->layers[layer].elements[i].texture = &cloud_small;
-                      }
-
                   }
                   else if (layer == LAYER_MOUNTAINS)
                   {
-                      // Randomly pick mountain type
                       int mountain_choice = rand() % 3;
                       if (mountain_choice == 0)
-                      {
                           background->layers[layer].elements[i].texture = &mountain_small;
-                      }
                       else if (mountain_choice == 1)
-                      {
                           background->layers[layer].elements[i].texture = &mountain_large;
-                      }
                       else
-                      {
                           background->layers[layer].elements[i].texture = &mountain_twin_peaks;
-                      }
-
                   }
                   else if (layer == LAYER_HOUSES)
                   {
-                      // Randomly pick house or bush
                       if (rand() % 2 == 0)
-                      {
                           background->layers[layer].elements[i].texture = &bush;
-                      }
                       else
                       {
-                        //   background->layers[layer].elements[i].texture = &house;
+                          // background->layers[layer].elements[i].texture = &house;
                       }
-
                   }
                   else // if (layer == LAYER_TREES)
                   {
                       background->layers[layer].elements[i].texture = &tree;
+                  }
+                  
+                  if (max_x < TERMINAL_DISPLAY_WIDTH) max_x = TERMINAL_DISPLAY_WIDTH;
+                  
+                  if (layer == LAYER_MOUNTAINS) {
+                      float proposed_x = max_x - (rand() % 30 + 10);
+                      if (proposed_x < TERMINAL_DISPLAY_WIDTH) {
+                          proposed_x = TERMINAL_DISPLAY_WIDTH;
+                      }
+                      background->layers[layer].elements[i].x = proposed_x;
+                  } else {
+                      background->layers[layer].elements[i].x = max_x + (rand() % 40 + 20);
                   }
               }
           }

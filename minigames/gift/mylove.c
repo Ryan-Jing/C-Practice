@@ -258,6 +258,7 @@ int main()
             }
         };
 
+        // Set initial random cutscene trigger time between 30 and 180 seconds
         float next_cutscene_trigger = (float)((rand() % 151) + 30);
 
         while(!terminate_execution)

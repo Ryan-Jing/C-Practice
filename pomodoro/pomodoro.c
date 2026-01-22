@@ -191,8 +191,8 @@ int main(int argc, char *argv[])
         // Monocraft Nerd Font hourglass icon: ⌛ (U+231B)
         run_timer(work_timer_minutes, "\u231B", timer_work);
 
-        // Monocraft Nerd Font scissors icon: ✂ (U+2702)
-        run_timer(break_timer_minutes, "\u2702", timer_break);
+        // Monocraft Nerd Font scissors icon: ⚓ (U+2693) | ✂ (U+2702)
+        run_timer(break_timer_minutes, "\u2693", timer_break);
     }
 
     return 0;

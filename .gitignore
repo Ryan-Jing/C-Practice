@@ -2,3 +2,5 @@
 /.vscode/
 .DS_Store
 minigames/gift/
+volume/volume
+volume/player_state
